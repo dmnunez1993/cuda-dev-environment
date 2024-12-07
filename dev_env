@@ -133,8 +133,6 @@ def build():
                f"--build-arg USER_NAME={user} "
                f"-t {IMAGE_NAME} -f {dockerfile_path} .")
 
-    print(command)
-
     run_command(command)
 
 
