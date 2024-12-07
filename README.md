@@ -2,7 +2,7 @@
 
 ## About
 
-This project aims to deliver a ready-to-use development environment pre-configured with all necessary dependencies for seamless CUDA-based deep learning development in Linux-Based systems.
+This project aims to deliver a ready-to-use development environment pre-configured with all necessary CUDA dependencies for deep learning development on Linux-Based systems, avoiding the need for manual configuration of CUDA on the host system.
 
 ## Dependencies
 
