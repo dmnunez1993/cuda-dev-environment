@@ -62,3 +62,7 @@ Once the changes are complete:
 Afterward, you can navigate back to the working directory within the development environment. The directory is always mounted at the root of the repository, and its name matches the name of the working directory on the host system. For example, if your working directory on the host system is /absolute/path/to/workdir, you can return to it in the development environment by navigating to:
 
     cd /workdir
+
+## License
+
+MIT
