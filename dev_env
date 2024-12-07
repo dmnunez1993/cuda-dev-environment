@@ -143,7 +143,10 @@ def main():
     """
     Main function of the script
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        prog="cuda_dev_env",
+        description="Creates a Dev Environment with Docker adding CUDA support"
+    )
     parser.add_argument(
         "--command",
         type=str,
