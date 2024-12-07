@@ -12,6 +12,16 @@ CONTAINER_NAME = 'cuda_dev_env'
 DATA_FOLDER_PATH = '.cuda_dev_env'
 
 
+
+def check_image_exists(image_name):
+    """
+    Checks if a docker image exists.
+    """
+    command = f"docker image inspect {image_name}"
+    ret = run_command(command, True) == 0
+    return ret
+
+
 def run_command(command, hide_std=False):
     """
     Runs the given command.
@@ -147,13 +157,17 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.command == "run" and (args.workdir is None or args.workdir == ""):
-        parser.error("--workdir is required to run the dev environment")
+    workdir = os.getcwd()
+
+    if args.command == "run" and (args.workdir is not None and args.workdir == ""):
+        workdir = args.workdir
 
     command = args.command
 
     if command == 'run':
-        run(args.workdir)
+        if not check_image_exists(IMAGE_NAME):
+            build()
+        run(workdir)
     elif command == 'build':
         build()
 

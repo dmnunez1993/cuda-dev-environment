@@ -19,7 +19,7 @@ RUN apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
 RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/docker
 
 # Install misc
-RUN apt-get install -y vim
+RUN apt-get install -y vim bash-completion
 RUN pip3 install virtualenv
 
 # Set up locales
