@@ -1,5 +1,17 @@
+#!/usr/bin/env bash
 
+source /etc/bash_completion
 
-#!/usr/bin/env bash # Start bash
+source $HOME/.virtualenvs/venv/bin/activate
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64"
+export CUDA_HOME=/usr/local/cuda
+export PATH="/usr/local/cuda/bin:$PATH"
+
+if [ -f .bashrc ]; then
+   source .bashrc
+fi
+
+# Start bash
 bash -l
-
+stty sane

@@ -4,11 +4,29 @@ currdir=$(echo $PWD)
 
 cd ~/
 
+mkdir -p $HOME/.virtualenvs/
+
+cd $HOME/.virtualenvs/
+
+# Setup virtualenv
+if [ ! -d "venv" ]; then
+  echo "Setting up virtualenv..."
+  virtualenv --system-site-packages -p python3 venv 
+fi
+
+
 if [ -f .bashrc ]; then
    source .bashrc
 fi
 
 cd $currdir
+
+source /etc/bash_completion
+source $HOME/.virtualenvs/venv/bin/activate
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64"
+export CUDA_HOME=/usr/local/cuda
+export PATH="/usr/local/cuda/bin:$PATH"
 
 # Start bash
 bash -l

@@ -53,7 +53,7 @@ def run_dev_environment(workdir):
         f"--volume {home_folder}/.gitconfig:/home/{user}/.gitconfig"
     )
     docker_args.append("--gpus all")
-    docker_args.append(f"--volume {workdir}/{workdir_name}")
+    docker_args.append(f"--volume {workdir}:/{workdir_name}/")
     docker_args.append(f"--name {CONTAINER_NAME}")
     docker_args.append(f"--hostname {CONTAINER_NAME}")
     docker_args.append(f"--workdir /{workdir_name}/")
