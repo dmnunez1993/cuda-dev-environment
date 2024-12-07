@@ -160,7 +160,7 @@ def main():
 
     workdir = os.getcwd()
 
-    if args.command == "run" and (args.workdir is not None and args.workdir == ""):
+    if args.command == "run" and (args.workdir is not None and args.workdir != ""):
         workdir = args.workdir
 
     command = args.command
