@@ -47,7 +47,7 @@ This command performs the following functions:
 * Skips the build step if the image has already been created previously.
 * Creates a Docker container once the image is ready, with the specified working directory mounted as a volume.
 
-A Python virtual environment is created by default. However, it is also posible to install other tools such as Conda, Pyenv, as needed.
+By default, a Python virtual environment is automatically created and ready for immediate use.  However, it is also posible to install other tools such as Conda, Pyenv, as needed.
 
 If the project needs specific configurations (e.g., loading Pyenv or Conda), is it possible to create or modify a .bashrc file within the container's home folder to meet these requirements.
 
