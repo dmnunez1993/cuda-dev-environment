@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+import argparse
+import getpass
+import subprocess
+import os
+import platform
+import sys
+
+
+IMAGE_NAME = 'cuda_dev_env'
+CONTAINER_NAME = 'cuda_dev_env'
+DATA_FOLDER_PATH = '.cuda_dev_env'
+
+
+def run_command(command, hide_std=False):
+    """
+    Runs the given command.
+    """
+    if hide_std:
+        with open(os.devnull, 'w', encoding='utf-8') as dev_null:
+            return subprocess.call(
+                command, shell=True, stdout=dev_null, stderr=dev_null
+            )
+    return subprocess.call(command, shell=True)
+
+
+
+def run_dev_environment(workdir):
+    """
+    Runs the dev environment
+    """
+
+    workdir = os.path.abspath(workdir)
+    workdir_name = os.path.basename(workdir)
+
+    user = getpass.getuser()
+    uid = os.getuid()
+    docker_args = []
+
+    home_folder = os.path.expanduser("~")
+    docker_args.append("-it")
+    docker_args.append("--rm")
+    docker_args.append(f"--name=\"{CONTAINER_NAME}\"")
+    docker_args.append(f"--user {uid}:{uid}")
+    docker_args.append(f"-e USER={user}")
+    docker_args.append(
+        f"--volume {home_folder}/{DATA_FOLDER_PATH}/user/:/home/{user}/"
+    )
+    docker_args.append(
+        f"--volume {home_folder}/.ssh/:/home/{user}/.ssh/"
+    )
+    docker_args.append(
+        f"--volume {home_folder}/.gitconfig:/home/{user}/.gitconfig"
+    )
+    docker_args.append("--gpus all")
+    docker_args.append(f"--volume {workdir}/{workdir_name}")
+    docker_args.append(f"--name {CONTAINER_NAME}")
+    docker_args.append(f"--hostname {CONTAINER_NAME}")
+    docker_args.append(f"--workdir /{workdir_name}/")
+
+    docker_args = ' '.join(docker_args)
+    docker_command = f"docker run {docker_args} {IMAGE_NAME} setup_env"
+
+    run_command(
+        f"mkdir -p {home_folder}/{DATA_FOLDER_PATH}/user/"
+    )
+
+    if not os.path.isfile(f"{home_folder}/.gitconfig"):
+        run_command(f"touch {home_folder}/.gitconfig")
+
+    run_command(docker_command)
+
+
+def attach_dev_environment():
+    """
+    Attaches to the dev environment
+    """
+    uid = os.getuid()
+    command = f"docker exec -it --user {uid}:{uid} {CONTAINER_NAME} attach_env"
+    run_command(command)
+
+
+def is_running():
+    """
+    Checks if a container is running
+    """
+    command = f"docker ps | grep {CONTAINER_NAME} > /dev/null"
+    try:
+        subprocess.check_call(command, shell=True)
+    except Exception:
+        return False
+
+    return True
+
+
+def run(workdir):
+    """
+    Runs the dev environment
+    """
+    if not is_running():
+        print("Running dev environment")
+        run_dev_environment(workdir)
+    else:
+        print("Attaching to dev environment")
+        attach_dev_environment()
+
+
+def build():
+    """
+    Builds the dev environment
+    """
+    print("Building dev environment")
+    user = getpass.getuser()
+    uid = os.getuid()
+
+    dockerfile_path = 'Dockerfile'
+
+    if platform.processor() == 'arm':
+        dockerfile_path = 'Dockerfile.arm64'
+
+    command = ("docker build "
+               f"--build-arg USER_UID={uid} "
+               f"--build-arg USER_NAME={user} "
+               f"-t {IMAGE_NAME} -f {dockerfile_path} .")
+
+    print(command)
+
+    run_command(command)
+
+
+
+def main():
+    """
+    Main function of the script
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--command",
+        type=str,
+        help="The dev env command",
+        default="run"
+    )
+    parser.add_argument(
+        "--workdir",
+        type=str,
+        help='The work directory'
+    )
+    args = parser.parse_args()
+
+    if args.command == "run" and (args.workdir is None or args.workdir == ""):
+        parser.error("--workdir is required to run the dev environment")
+
+    command = args.command
+
+    if command == 'run':
+        run(args.workdir)
+    elif command == 'build':
+        build()
+
+    else:
+        print(f"Command {command} not supported!")
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
