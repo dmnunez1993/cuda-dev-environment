@@ -12,14 +12,14 @@ RUN useradd -r -u ${USER_UID} -g ${USER_UID} ${USER_NAME}
 RUN apt-get update && apt-get install -y sudo python3 python3-dev python3-pip curl git
 
 # Install pyenv deps
-RUN apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+RUN apt-get update && apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils \
-    tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+    tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libopenmpi-dev
 
 RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/docker
 
 # Install misc
-RUN apt-get install -y vim bash-completion
+RUN apt-get update && apt-get install -y vim bash-completion
 RUN pip3 install virtualenv
 
 # Set up locales
